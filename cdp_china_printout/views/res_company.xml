@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_company_form_inherit" model="ir.ui.view">
+        <field name="name">account_reports.res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+		<xpath expr="/form//field[@name='rental_loc_id']" position="after">
+			<field name="x_studio_company_details"/>
+  		</xpath>
+        </field>
+    </record>
+</odoo>
