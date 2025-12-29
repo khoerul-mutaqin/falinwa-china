@@ -1,5 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    
+    <!-- server action to the one above -->
+
+    <record model="ir.actions.server" id="cdp_config_function_choose-address.action_server">
+      <field name="name">FAL : Config function of choose address in template</field>
+      <field name="model_id" ref="model_res_company"/>
+      <field name="state">code</field>
+      <field name="code">
+# Available variables:
+#  - env: environment on which the action is triggered
+#  - model: model of the record on which the action is triggered; is a void recordset
+#  - record: record on which the action is triggered; may be void
+#  - records: recordset of all records on which the action is triggered in multi-mode; may be void
+#  - time, datetime, dateutil, timezone: useful Python libraries
+#  - float_compare: utility function to compare floats based on specific precision
+#  - log: log(message, level='info'): logging function to record debug information in ir.logging table
+#  - _logger: _logger.info(message): logger to emit messages in server logs
+#  - UserError: exception class for raising user-facing warning messages
+#  - Command: x2many commands namespace
+# To return an action, assign: action = {...}
+
+self = records
+
+
+
+# Initialize the tool
+ICPSudo = self.env['ir.config_parameter'].sudo()
+# put value first
+stored_value = ICPSudo.get_param('company_details')
+for record in self:
+    # 1. Handle "Address"
+    if record.x_studio_report_selection == 'Address':
+        if record.company_details:
+            # Update Global Parameter 
+            ICPSudo.set_param('company_details', record.company_details)
+            record['x_company_details'] = record.company_details
+            # Update address from partner
+            record['company_details'] = record.partner_id.contact_address
+
+    # 2. Handle "Company Details" or Default
+    else:
+        # if selection is 'Company Details' atau other, get from system parameter
+        if stored_value:
+            record['company_details'] = stored_value
+            if record.x_studio_report_selection != 'Company Details':
+                 record['x_company_details'] = stored_value        
+      </field>
+    </record>
+    
 
 <template id="report_payment_receipt_document_xpath" name="external_layout_bubble.inherit" inherit_id="web.external_layout_bubble">
 <data>
